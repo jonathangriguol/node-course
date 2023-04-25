@@ -1,78 +1,248 @@
+const fs = require("fs");
+
 class ProductManager {
-	#code = 0;
+  #id = 0;
 
-	constructor() {
-		this.products = [];
-	}
+  constructor(path) {
+    this.products = [];
+    this.path = path;
 
-	getProductos() {
-		return this.products;
-	}
+    if (!fs.existsSync(path)) {
+      fs.writeFileSync(path, JSON.stringify([]));
+    }
+  }
 
-	/**
-	 * Permite agregar un producto a la lista de Productos
-	 * @param {string} title Nombre del Producto
-	 * @param {string} description Descripcion del Producto
-	 * @param {number} price Precio del Producto
-	 * @param {string} thumbnail Path de la imagen
-	 * @param {number} code Id del Producto
-	 * @param {number} stock Cantidad de piezas disponibles
-	 */
-	agregarProducto(title, description, price, thumbnail, stock = 0) {
-		const product = {
-			title,
-			description,
-			price,
-			thumbnail,
-			stock,
-		};
+  async getProducts() {
+    try {
+      const products = await fs.promises.readFile(this.path, "utf-8");
+      return JSON.parse(products);
+    } catch (err) {
+      console.log("Error trying get products.");
+    }
+  }
 
-		// Valida que todas las properties del producto a crear tengan algun valor
-		const isValid = !Object.values(product).some(p => p === null || p === '');
+  /**
+   * Permite agregar un producto a la lista de Productos
+   * @param {number} code code del Producto
+   * @param {string} title Nombre del Producto
+   * @param {string} description Descripcion del Producto
+   * @param {number} price Precio del Producto
+   * @param {string} thumbnail Path de la imagen
+   * @param {number} stock Cantidad de piezas disponibles
+   */
+  async agregarProducto(code, title, description, price, thumbnail, stock = 0) {
+    const product = {
+      code,
+      title,
+      description,
+      price,
+      thumbnail,
+      stock,
+    };
 
-		if(!isValid)
-			console.error('ERROR!!', 'All fields must be completed');
+    // Valida que todas las properties del producto a crear tengan algun valor
+    const isValid = !Object.values(product).some((p) => p === null || p === "");
 
-		product.code = this.#getCode();
+    if (!isValid) {
+      console.error("ERROR!!", "All fields must be completed");
+      return false;
+    }    
 
-		this.products.push(product);
-	}
+    try {
+      const products = await this.getProducts();
+	  product.id = this.#getID();
 
-	#getCode() {
-		this.#code++;
-		return this.#code;
-	}
+      products.push(product);
 
-	/**
-	 * Retorna el Producto por Code
-	 * @param {number} code ID del Producto
-	 * @returns product
-	 */
-	getProductByCode(code) {
-		const product = this.products.find(
-			p => p.code === code
-		);
+      await fs.promises.writeFile(this.path, JSON.stringify(products));
+    } catch (err) {
+      console.log(err, "Error on create product.");
+    }
+  }
 
-		if(product)
-			return product;
+  /**
+   * Permite modificar un producto
+   * @param {number} code code del Producto
+   * @param {string} title Nombre del Producto
+   * @param {string} description Descripcion del Producto
+   * @param {number} price Precio del Producto
+   * @param {string} thumbnail Path de la imagen
+   * @param {number} stock Cantidad de piezas disponibles
+   */
+  async editarProducto(id, code, title, description, price, thumbnail, stock = 0) {
+    const product = {};
 
+    // Valida que todas las properties del producto a crear tengan algun valor
+    const isValid = !Object.values(product).some((p) => p === null || p === "");
 
-		return "Product Not Found";
-	}
+    if (!isValid) console.error("ERROR!!", "All fields must be completed");
+
+    const current = await this.getProductByID(id);
+
+    const editado = {
+      ...current,
+      code,
+      title,
+      description,
+      price,
+      thumbnail,
+      stock,
+    };
+
+    try {
+		const products = await this.getProducts();
+
+		const updatedList = products.map( p => p.id === id ? editado : p);
+  
+		await fs.promises.writeFile(this.path, JSON.stringify(updatedList));
+	  } catch (err) {
+		console.log(err, "Error on edit a product.");
+	  }
+  }
+
+  #getID() {
+    this.#id++;
+    return this.#id;
+  }
+
+  /**
+   * Retorna el Producto por Code
+   * @param {string} code Code del Producto
+   * @returns product
+   */
+  async getProductByCode(code) {
+    try {
+      const products = await fs.promises.readFile(this.path, "utf-8");
+      const product = JSON.parse(products).find((p) => p.code === code);
+
+      if (product) return product;
+
+      console.log("Product Not Found");
+    } catch (err) {
+      console.log("Error on find product by Code");
+    }
+  }
+
+  /**
+   * Retorna el Producto por Code
+   * @param {number} id ID del Producto
+   * @returns product
+   */
+  async getProductByID(id) {
+    try {
+      const products = await fs.promises.readFile(this.path, "utf-8");
+      const product = JSON.parse(products).find((p) => p.id === id);
+
+      if (product) return product;
+
+      console.log("Product Not Found");
+    } catch (err) {
+      console.log("Error on find product by ID");
+    }
+  }
+
+  /**
+   * Elimina el Producto por ID
+   * @param {number} id ID del Producto
+   * @returns void
+   */
+  async deleteProductByID(id) {
+    try {
+      const products = await this.getProducts();
+
+      const index = products.findIndex((p) => p.id === id);
+      products.splice(index, 1);
+
+      await fs.promises.writeFile(this.path, JSON.stringify(products));
+    } catch (err) {
+      console.log(err, `Error on delete product with ID: ${id}`);
+    }
+  }
 }
 
 // TESTING
-const productManager = new ProductManager();
-productManager.agregarProducto('Mouse Wireless Logi', 'Mouse inalambrico Logitech', '7500', '/images/mouse-logi.png', 20);
-productManager.agregarProducto('Teclado Logitech', 'Teclado Logitech ES-es USB', '12500', '/images/teclado-logi.png', 18);
-productManager.agregarProducto('Auriculares Razr', 'Auriculares gamer pro', '15900', '/images/auri-razr.png', 20);
-productManager.agregarProducto('Monitor EPS', 'Monitor Samsung OLED', '120500', '/images/monitor.png', 7);
-productManager.agregarProducto('DIMM RAM', 'Memoria RAM DDR 1Gb 1333 mhz', '2500', '/images/memo.png');
-productManager.agregarProducto('DIMM RAM', 'Memoria RAM DDR 4Gb 1333 mhz', '2500', null, null);
+const test = async () => {
+  try {
+    const productManager = new ProductManager("./productos.json");
+	console.log('Vacio:', productManager.getProducts());
+    await productManager.agregarProducto(
+      "A001",
+      "Mouse Wireless Logi",
+      "Mouse inalambrico Logitech",
+      "7500",
+      "/images/mouse-logi.png",
+      20
+    );
+    await productManager.agregarProducto(
+      "COD1",
+      "Teclado Logitech",
+      "Teclado Logitech ES-es USB",
+      "12500",
+      "/images/teclado-logi.png",
+      18
+    );
+    await productManager.agregarProducto(
+      "ARG0",
+      "Auriculares Razr",
+      "Auriculares gamer pro",
+      "15900",
+      "/images/auri-razr.png",
+      20
+    );
+    await productManager.agregarProducto(
+      "COD2",
+      "Monitor EPS",
+      "Monitor Samsung OLED",
+      "120500",
+      "/images/monitor.png",
+      7
+    );
+    await productManager.agregarProducto(
+      "COD3",
+      "DIMM RAM",
+      "Memoria RAM DDR 1Gb 1333 mhz",
+      "2500",
+      "/images/memo.png"
+    );
+    await productManager.agregarProducto(
+      "COD4",
+      "DIMM RAM",
+      "Memoria RAM DDR 4Gb 1333 mhz",
+      "2500",
+      null,
+      null
+    );
 
-console.log('Listado de productos', productManager.getProductos());
+    console.log("Listado de productos", await productManager.getProducts());
 
-console.log('Producto #code: 1', productManager.getProductByCode(1));
-console.log('Producto #code: 4', productManager.getProductByCode(4));
-console.log('Producto #code: 100', productManager.getProductByCode(100));
+    const testProd1 = await productManager.getProductByCode("A001");
+    console.log("Producto #code: A001", testProd1);
 
+    const testProd2 = await productManager.getProductByCode("COD3");
+    console.log("Producto #code: COD3", testProd2);
+
+	// Va a retornar un not found
+    await productManager.getProductByCode("COD100");
+
+    let listLength = await productManager.getProducts();
+    console.log("Cantidad:", listLength.length);
+
+    await productManager.deleteProductByID(1);
+    listLength = await productManager.getProducts();
+    console.log("Cantidad despues de borrar 1 producto:", listLength.length);
+
+	await productManager.editarProducto(
+		4,
+		"COD3",
+		"EDITADO",
+		"Editado....",
+		"editado",
+		"/images/memo.png"
+	  );
+
+  } catch (error) {
+    console.log(error, "Something was wrong when testing...");
+  }
+};
+
+test();

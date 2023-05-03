@@ -1,0 +1,128 @@
+[
+  {
+    "code": "COD1",
+    "title": "Teclado Logitech",
+    "description": "Teclado Logitech ES-es USB",
+    "price": "12500",
+    "thumbnail": "/images/teclado-logi.png",
+    "stock": 18,
+    "id": 2
+  },
+  {
+    "code": "ARG0",
+    "title": "Auriculares Razr",
+    "description": "Auriculares gamer pro",
+    "price": "15900",
+    "thumbnail": "/images/auri-razr.png",
+    "stock": 20,
+    "id": 3
+  },
+  {
+    "code": "COD3",
+    "title": "EDITADO",
+    "description": "Editado....",
+    "price": "editado",
+    "thumbnail": "/images/memo.png",
+    "stock": 0,
+    "id": 4
+  },
+  {
+    "code": "COD3",
+    "title": "DIMM RAM",
+    "description": "Memoria RAM DDR 1Gb 1333 mhz",
+    "price": "2500",
+    "thumbnail": "/images/memo.png",
+    "stock": 0,
+    "id": 5
+  },
+  {
+    "code": "DEMO0",
+    "title": "Test Product No. 0",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 6
+  },
+  {
+    "code": "DEMO1",
+    "title": "Test Product No. 1",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 7
+  },
+  {
+    "code": "DEMO2",
+    "title": "Test Product No. 2",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 8
+  },
+  {
+    "code": "DEMO3",
+    "title": "Test Product No. 3",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 9
+  },
+  {
+    "code": "DEMO4",
+    "title": "Test Product No. 4",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 10
+  },
+  {
+    "code": "DEMO5",
+    "title": "Test Product No. 5",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 11
+  },
+  {
+    "code": "DEMO6",
+    "title": "Test Product No. 6",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 12
+  },
+  {
+    "code": "DEMO7",
+    "title": "Test Product No. 7",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 13
+  },
+  {
+    "code": "DEMO8",
+    "title": "Test Product No. 8",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 14
+  },
+  {
+    "code": "DEMO9",
+    "title": "Test Product No. 9",
+    "description": "Lorem ipsum...",
+    "price": "2500",
+    "thumbnail": "/images/test.png",
+    "stock": 10,
+    "id": 15
+  }
+]
